@@ -5,23 +5,23 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 
-def find_answers(soup):
+def find_answers(soup, counter):
     """
     Goes through the soup object to find all divs that contain the answer class (Answer AnswerBase) then searches within
     those tags for the <p> tags which contain the actual text for the answer and then creates a new txt file which
     contains that text
     :param soup: the soup object from BeautifulSoup and allows for the parsing of the website
-    :return:
+    :return: returns the count of how many text files have been made so more files can continue to be made
     """
-    counter = 0
-    divs = soup.find_all("div", class_="Answer AnswerBase")  # finds all the div tags
+    divs = soup.find_all("div", class_="Answer AnswerBase")  # finds all the div tags with the answer class
     for d in divs:
         answers = d.find_all("p")  # within the span tags finds all the paragraph tags so answers can be kept together
         counter += 1
-        with open("Text" + str(counter) + ".txt", "w+") as f:  # need to add in an if statement since some spans empty
+        with open("Text" + str(counter) + ".txt", "w+") as f:
             for a in answers:
-                f.write(a.text)  # writes each answer in a separate text file, though some are empty cause no text
-
+                f.write(a.text)  # writes each answer in a separate text file
+                f.write("\n")
+    return counter
 
 def soup_given_url(given_url):
     """
@@ -79,11 +79,9 @@ def main(topic):
 
     count = 0
     for url in urls:
-        count += 1
         soup = soup_given_url(url)
-        find_answers(soup)
+        count = find_answers(soup, count)
 
-    print(count)
 
 
 main(str('Experiences-in-Life'))
